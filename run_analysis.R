@@ -1,5 +1,4 @@
 library(dplyr)
-library(tidyr)
 
 # This function assumes UCI HAR Dataset sub-directory containing all Samsung instrumentation data
 # exists within the same directory as this source file.
@@ -12,15 +11,18 @@ run_analysis <- function() {
   # Load raw data sets for training and test
   test.data <- read.datasets(data.dir, "test")
   train.data <- read.datasets(data.dir, "train")
+  # Load sub-set of desired features (std|mean) and all activity labels
   features <- get.features(features.file)
-  activity.labels <- tbl_df(read.table(activity.file, 
-                                       header = FALSE, 
-                                       col.names = c("ClassLabel", "ActivityName")))
+  activity.labels <- get.activities(activity.file)
   
   # Combine rows for test and training X, Y and Subject results
   x.data <- bind_rows(test.data$X, train.data$X)
   y.data <- bind_rows(test.data$Y, train.data$Y)
   subject.data <- bind_rows(test.data$Subject, train.data$Subject)
+  
+  # Select only desired feature columns from x.data
+  x.data.features <- x.data %>% select(num_range("V", features$FeatureLabel))
+  names(x.data.features) <- features$FeatureName
 }
 
 # Retrieve only the desired feature values (containing mean or std)
@@ -30,6 +32,13 @@ get.features <- function(features.file) {
                                 col.names = c("FeatureLabel", "FeatureName")))
   result <- features %>% filter(grepl("(std|mean)+", FeatureName))
   return (result)
+}
+
+get.activities <- function(activity.file) {
+  activity.labels <- tbl_df(read.table(activity.file, 
+                                       header = FALSE, 
+                                       col.names = c("ClassLabel", "ActivityName")))
+  return(activity.labels)
 }
 
 # Function to read in each raw dataset (either train or test)
