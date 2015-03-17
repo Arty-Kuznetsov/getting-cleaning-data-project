@@ -7,10 +7,19 @@ library(tidyr)
 run_analysis <- function() {
   data.dir <- "./UCI HAR Dataset/"
   
+  # Load raw data sets for training and test
   test.data <- read.datasets(data.dir, "test")
   train.data <- read.datasets(data.dir, "train")
+  
+  # Combine rows for test and training X, Y and Subject results
+  x.data <- bind_rows(test.data$X, train.data$X)
+  y.data <- bind_rows(test.data$Y, train.data$Y)
+  subject.data <- bind_rows(test.data$Subject, train.data$Subject)
 }
 
+# Function to read in each raw dataset (either train or test)
+# Returns a list labeled X, Y, Subject for each  corresponding file 
+# within the specified sub-directory.
 read.datasets <- function(data.dir, type) {
   if (type != "test" && type != "train") {
     stop("Invalid dataset. Must be 'training' or 'test'.")
