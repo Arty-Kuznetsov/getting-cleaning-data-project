@@ -12,9 +12,7 @@ run_analysis <- function() {
   # Load raw data sets for training and test
   test.data <- read.datasets(data.dir, "test")
   train.data <- read.datasets(data.dir, "train")
-  features <- tbl_df(read.table(features.file, 
-                                header = FALSE, 
-                                col.names = c("FeatureLabel", "FeatureName")))
+  features <- get.features(features.file)
   activity.labels <- tbl_df(read.table(activity.file, 
                                        header = FALSE, 
                                        col.names = c("ClassLabel", "ActivityName")))
@@ -23,6 +21,15 @@ run_analysis <- function() {
   x.data <- bind_rows(test.data$X, train.data$X)
   y.data <- bind_rows(test.data$Y, train.data$Y)
   subject.data <- bind_rows(test.data$Subject, train.data$Subject)
+}
+
+# Retrieve only the desired feature values (containing mean or std)
+get.features <- function(features.file) {
+  features <- tbl_df(read.table(features.file, 
+                                header = FALSE, 
+                                col.names = c("FeatureLabel", "FeatureName")))
+  result <- features %>% filter(grepl("(std|mean)+", FeatureName))
+  return (result)
 }
 
 # Function to read in each raw dataset (either train or test)
