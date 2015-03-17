@@ -1,5 +1,4 @@
 library(dplyr)
-library(tidyr)
 
 # This function assumes UCI HAR Dataset sub-directory containing all Samsung instrumentation data
 # exists within the same directory as this source file.
