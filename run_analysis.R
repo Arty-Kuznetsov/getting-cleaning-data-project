@@ -6,10 +6,18 @@ library(tidyr)
 # Download from: https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
 run_analysis <- function() {
   data.dir <- "./UCI HAR Dataset/"
+  features.file <- paste(data.dir, "features.txt", sep="")
+  activity.file <- paste(data.dir, "activity_labels.txt", sep="")
   
   # Load raw data sets for training and test
   test.data <- read.datasets(data.dir, "test")
   train.data <- read.datasets(data.dir, "train")
+  features <- tbl_df(read.table(features.file, 
+                                header = FALSE, 
+                                col.names = c("FeatureLabel", "FeatureName")))
+  activity.labels <- tbl_df(read.table(activity.file, 
+                                       header = FALSE, 
+                                       col.names = c("ClassLabel", "ActivityName")))
   
   # Combine rows for test and training X, Y and Subject results
   x.data <- bind_rows(test.data$X, train.data$X)
