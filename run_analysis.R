@@ -22,12 +22,23 @@ run_analysis <- function() {
   subject.data <- bind_rows(test.data$Subject, train.data$Subject)
   
   # Select only desired feature columns from x.data
-  x.data.features <- x.data %>% select(num_range("V", features$FeatureLabel))
-  names(x.data.features) <- features$FeatureName
+  x.data <- x.data %>% select(num_range("V", features$FeatureLabel))
+  names(x.data) <- features$FeatureName
+  x.data <- clean.featureNames(x.data)
   
   # Update the y.data table to use correct activity names
   names(y.data) <- c("ActivityId")
   y.data <- inner_join(y.data, activity.labels, by="ActivityId")
+  
+  # Update the subject.data
+  names(subject.data) <- c("Subject")
+  
+  # Combine final data set and return summary of mean values by activity and subject
+  combined.data <- bind_cols(x.data, y.data, subject.data)
+  tidy.data <- summarise_each(group_by(combined.data, ActivityName, Subject), funs(mean))
+  
+  # Trim off the final activity id column
+  return(tidy.data[,1:81])
 }
 
 # Retrieve only the desired feature values (containing mean or std)
@@ -44,6 +55,18 @@ get.activities <- function(activity.file) {
                                        header = FALSE, 
                                        col.names = c("ActivityId", "ActivityName")))
   return(activity.labels)
+}
+
+# Put feature labels into a human readable format
+clean.featureNames <- function(data) {
+  names(data) <- gsub('^t', 'Time', names(data))
+  names(data) <- gsub('^f', 'Frequency', names(data))
+  names(data) <- gsub('\\(', '', names(data))
+  names(data) <- gsub('\\)', '', names(data))
+  names(data) <- gsub('-', '', names(data))
+  names(data) <- gsub('mean', 'Mean', names(data))
+  names(data) <- gsub('std', 'Std', names(data))
+  return(data)
 }
 
 # Function to read in each raw dataset (either train or test)
