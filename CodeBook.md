@@ -65,11 +65,11 @@ The following rules are applied to tidy the Feature column names:
 
 The following table describes the contents of the tidied data set:
 
-Column            | Description
--------------------------------
-ActivityName      | Activity name as mapped from ActivtyId to Label using `activity_labels.txt`
-Subject           | Subject value
-TimeBodyAccMeanX  | Average value from combined test and training data sets
-TimeBodyAccMeanY  | Average value from combined test and training data sets
-TimeBodyAccMeanZ  | ...
-
+| Column            | Description                                                                  |   |
+|-------------------|------------------------------------------------------------------------------|---|
+| ActivtyName       | Activity name as mapped from ActivtyId to Label using `activity_labels.txt`  |   |
+| Subject           | Subject value                                                                |   |
+| TimeBodyAccMeanX  | Average value from combined test and training data sets                      |   |
+| TimeBodyAccMeanY  | Average value from combined test and training data sets                      |   |
+| TimeBodyAccMeanZ  | ...                                                                          |   |
+                                                                     |
