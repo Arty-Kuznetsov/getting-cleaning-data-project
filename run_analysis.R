@@ -1,4 +1,5 @@
 library(dplyr)
+library(tidyr)
 
 # This function assumes UCI HAR Dataset sub-directory containing all Samsung instrumentation data
 # exists within the same directory as this source file.
@@ -23,6 +24,10 @@ run_analysis <- function() {
   # Select only desired feature columns from x.data
   x.data.features <- x.data %>% select(num_range("V", features$FeatureLabel))
   names(x.data.features) <- features$FeatureName
+  
+  # Update the y.data table to use correct activity names
+  names(y.data) <- c("ActivityId")
+  y.data <- inner_join(y.data, activity.labels, by="ActivityId")
 }
 
 # Retrieve only the desired feature values (containing mean or std)
@@ -37,7 +42,7 @@ get.features <- function(features.file) {
 get.activities <- function(activity.file) {
   activity.labels <- tbl_df(read.table(activity.file, 
                                        header = FALSE, 
-                                       col.names = c("ClassLabel", "ActivityName")))
+                                       col.names = c("ActivityId", "ActivityName")))
   return(activity.labels)
 }
 
